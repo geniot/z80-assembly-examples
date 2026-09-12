@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="resizable-style.css">
+    <title>Resizable Demo</title>
+
+    <script src="resizable.js"></script>
+    <script src="jsspeccy/jsspeccy.js"></script>
+
+    <style>
+
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+
+        #jsspeccy {
+            width: 640px;
+            margin: auto;
+            background-color: white;
+        }
+
+        #myparent {
+            display: table;
+            height: 100%;
+            width: 100%;
+        }
+
+        #mychild {
+            display: table-cell;
+            vertical-align: middle;
+            width: 100%;
+        }
+
+        #win1, #win2 {
+            background-color: #ffffff;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div id="main">
+    <div class="resizable-left" id="win1">
+        <div style="padding-left:20px;padding-top:20px;display: flex;flex-direction: column;row-gap: 10px;">
+            <a href="#" onclick="emu.openUrl('sna/hello.sna')">Hello World!</a>
+            <a href="#" onclick="emu.openUrl('sna/fire.sna')">Fire</a>
+            <a href="#" onclick="emu.openUrl('sna/lines.sna')">Colored Lines</a>
+        </div>
+    </div>
+    <div class="resizable-right" id="win2">
+        <div id="myparent">
+            <div id="mychild">
+                <div id="jsspeccy"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+
+<script>
+
+    document.addEventListener("DOMContentLoaded", () => {
+        //...
+        document.getElementById("main").style.width = window.innerWidth + "px";
+        document.getElementById("main").style.height = window.innerHeight + "px";
+
+        var sizes = {
+            "win1": 0.2,
+            "win2": 0.8
+        };
+
+        let resizerThickness = 4;
+        Resizable.initialise("main", sizes, resizerThickness);
+        // Resizable.initialise("main", {});
+
+        emu = JSSpeccy(document.getElementById('jsspeccy'), {zoom: 2, sandbox: false, machine: 48, autoStart: false});
+    });
+
+    window.addEventListener("resize", () => {
+        Resizable.activeContentWindows[0].changeSize(window.innerWidth, window.innerHeight);
+        Resizable.activeContentWindows[0].childrenResize();
+    });
+
+
+</script>
+
+</html>
+
