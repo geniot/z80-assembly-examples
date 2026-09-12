@@ -38,6 +38,4 @@ codnam	ds	10,32
 linlen	=	$-linzac
 baslen	=	$-baszac
 
-    SAVESNA "main.sna", main
-
 	ENDM

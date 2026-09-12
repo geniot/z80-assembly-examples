@@ -275,4 +275,5 @@ palette:                     ; 16 colours black=>reds=>yellows=>white
 program_length = $-main
 
     include     TapLib.asm
-    MakeTape ZXSPECTRUM48, "fire.tap", "Fire", main, program_length, main
+    ; MakeTape ZXSPECTRUM48, "fire.tap", "Fire", main, program_length, main
+    SAVESNA "main.sna", main

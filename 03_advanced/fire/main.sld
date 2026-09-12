@@ -193,10 +193,3 @@ main.asm|251||0|2|32954|F|fire
 main.asm|251||0|2|32954|L|,fire,,+used
 main.asm|255||0|2|33600|F|palette
 main.asm|255||0|2|33600|L|,palette,,+used
-main.asm|278|TapLib.asm|14|-1|-1|Z|pages.size:16384,pages.count:4,slots.count:4,slots.adr:0,16384,32768,49152
-main.asm|278|TapLib.asm|23|1|23552|F|baszac
-main.asm|278|TapLib.asm|23|1|23552|L|,baszac,,+used
-main.asm|278|TapLib.asm|25|1|23556|F|linzac
-main.asm|278|TapLib.asm|25|1|23556|L|,linzac,,+used
-main.asm|278|TapLib.asm|30|1|23567|F|codnam
-main.asm|278|TapLib.asm|30|1|23567|L|,codnam,,+used
