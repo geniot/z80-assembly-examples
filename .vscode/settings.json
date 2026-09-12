@@ -24,7 +24,7 @@
                 "name": "Compile",
                 "color": "green",
                 "singleInstance": true,
-                "command": "sjasmplus --sld=main.sld --fullpath main.asm ",
+                "command": "sjasmplus --sld=main.sld --fullpath main.asm",
             },
             {
                 "cwd": "${fileWorkspaceFolder}/${relativeFileDirname}",
