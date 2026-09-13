@@ -1,3 +1,4 @@
+        SLDOPT COMMENT WPMEM, LOGPOINT, ASSERTION
         DEVICE ZXSPECTRUM48         ; Device setting for sjasmplus (.tap writing etc)
 SCREEN  EQU $4000                   ; Location of screen
 COLOR   EQU $5800                   ; Location of color array
