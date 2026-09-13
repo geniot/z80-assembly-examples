@@ -1,3 +1,4 @@
+    SLDOPT COMMENT WPMEM, LOGPOINT, ASSERTION
     DEVICE ZXSPECTRUM48
 ; Atic Atac for Sinclair ZX Spectrum
 ; (c) 1983 Ashby Computers and Graphics Ltd.
