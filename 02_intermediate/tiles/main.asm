@@ -1,10 +1,9 @@
-        SLDOPT COMMENT WPMEM, LOGPOINT, ASSERTION
         DEVICE ZXSPECTRUM48         ; Device setting for sjasmplus (.tap writing etc)
 SCREEN  EQU $4000                   ; Location of screen
 COLOR   EQU $5800                   ; Location of color array
 
-        ORG $8000                   ; Let's start our code at 32k
-main:
+        ORG $8000   
+main:                ; Let's start our code at 32k
         di                          ; Disable interrupts
         ld  sp,     0x8000          ; Set stack to grow down from our code
         ld  de,     0xfe00          ; im2 vector table start right after color table
@@ -27,16 +26,29 @@ rep_isr_setup:
         im  2                       ; set the interrupt mode
         ei                          ; Enable interrupt
 
+        call dirtymap
 mainloop:
+        ld hl, 8*1+6
+        call dirtytile
+        ld hl, 8*2+6
+        call dirtytile
+        ld a, 2
+        out (0xfe), a
+
         ld hl, map+63
         ld bc, 0x0808
 maploop:
         push hl
         push bc
         ld a, (hl)
+        bit 7, a
+        jr z, skipdraw
+        and 0x7f ; clear top bit
+        ld (hl), a
         ld l, a
         ld h, 0
         call drawtile
+skipdraw:        
         pop bc
         pop hl
         dec hl
@@ -46,6 +58,10 @@ maploop:
         dec c
         jr nz, maploop
         
+        ld a, 0
+        out (0xfe), a
+        
+        halt
 
         jp mainloop
 
@@ -95,7 +111,7 @@ drawtile:
         
         ; Instead of looping, we'll plot each pixel separately..
         ld bc, 255
-        DUP 8
+        DUP 7
             ld a, (de)    ; Read pixels from data
             ld (hl), a    ; Write to screen
             inc de        ; Increment de and hl..
@@ -105,10 +121,18 @@ drawtile:
             inc de
             add hl, bc    ; Add in bc to move to the next line in screen (and one byte back)
         EDUP
-        ld bc, 65536 - 256 * 8 + 32 ; Move to the next block of 8 pixels
+            ld a, (de)    ; Read pixels from data
+            ld (hl), a    ; Write to screen
+            inc de        ; Increment de and hl..
+            inc hl
+            ld a, (de)    ; And repeat
+            ld (hl), a
+            inc de
+
+        ld bc, 65536 + 255 - 256 * 8 + 32 ; Move to the next block of 8 pixels
         add hl, bc
         ld bc, 255        ; And repeat the above process
-        DUP 8
+        DUP 7
             ld a, (de)
             ld (hl), a
             inc de
@@ -118,6 +142,12 @@ drawtile:
             inc de
             add hl, bc            
         EDUP
+            ld a, (de)
+            ld (hl), a
+            inc de
+            inc hl
+            ld a, (de)
+            ld (hl), a
         
         ; Bitmap done, color to do
         pop bc
@@ -164,6 +194,30 @@ drawtile:
         ld a, (de)
         ld (hl), a       
         
+        ret
+
+; Marks all tiles as dirty and requiring redraw
+; no inputs, destroys hl, a, b
+dirtymap:
+        ld hl, map
+        ld b, 64
+dmloop:
+        ld a, (hl)
+        or 0x80
+        ld (hl), a
+        inc hl
+        dec b
+        jr nz, dmloop
+        ret
+
+; Marks one tile as dirty
+; hl=tile index, destroys hl, bc, a
+dirtytile:
+        ld bc, map
+        add hl, bc
+        ld a, (hl)
+        or 0x80
+        ld (hl), a
         ret
 
 isr:                    ; This will be called ~50Hz
