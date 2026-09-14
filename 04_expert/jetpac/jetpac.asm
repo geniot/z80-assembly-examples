@@ -3672,7 +3672,7 @@ DrawFontChar:
   add hl,hl               ; Calculate correct offset for ASCII character
   add hl,hl               ;
   add hl,hl               ;
-  ld de,$3a00
+  ld de,$3c00
   add hl,de               ; HL += base address
   ex de,hl                ; Store the character address in DE
   pop hl                  ; Restore HL

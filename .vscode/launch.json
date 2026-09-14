@@ -8,7 +8,8 @@
             "remoteType": "zsim",
             "zsim": {
                 "preset": "spectrum",
-                "memoryModel": "ZX48K"
+                "memoryModel": "ZX48K",
+                "zxBeeper": true
             },
             "sjasmplus": [
                 {
@@ -68,8 +69,7 @@
                 "spotCount": 10,
             },
             "startAutomatically": false,
-            "commandsAfterLaunch": [
-            ],
+            "commandsAfterLaunch": [],
             "rootFolder": "${fileWorkspaceFolder}/${relativeFileDirname}",
             "topOfStack": "main",
             //"load": "z80-sample-program.sna",

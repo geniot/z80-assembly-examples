@@ -46,6 +46,6 @@ key_read:
 ; The Pasmo assembler uses this directive when generating a tape image.
 ; Expects the same address as the loader routine so that Pasmo knows where
 ; to start running the code.
-  END $B000
+; END $B000
 
  SAVESNA "main.sna", main 
