@@ -8,12 +8,12 @@
 ;
 ;   $ pasmo --tzxbas loader.asm jetpac.tzx
 
-        SLDOPT COMMENT WPMEM, LOGPOINT, ASSERTION
-        DEVICE ZXSPECTRUM48         ; Device setting for sjasmplus (.tap writing etc)
+  SLDOPT COMMENT WPMEM, LOGPOINT, ASSERTION
+  DEVICE ZXSPECTRUM48         ; Device setting for sjasmplus (.tap writing etc)
 ; Address where the Jetpac game code will be placed.
   ORG $6000
 
-    INCLUDE "jetpac.asm"
+  INCLUDE "jetpac.asm"
 
 ; Game loader (based on the cartridge routine).
 ; Initialise the system and display the splash screen.
@@ -46,6 +46,6 @@ key_read:
 ; The Pasmo assembler uses this directive when generating a tape image.
 ; Expects the same address as the loader routine so that Pasmo knows where
 ; to start running the code.
-    ;end $B000
+  END $B000
 
  SAVESNA "main.sna", main 
