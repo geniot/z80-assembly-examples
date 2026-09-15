@@ -19,7 +19,7 @@ stack ds 512				; reserve some bytes for our stack
 endstack:					; mark end of our stack
 	
 background_definition:
-		include "background_screen.asm"	; the background data is in this file
+		include "../background_screen.asm"	; the background data is in this file
 
 start:
 	ld sp, endstack				; set up our new stack (we point to the end 

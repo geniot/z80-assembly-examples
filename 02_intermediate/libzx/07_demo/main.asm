@@ -36,7 +36,7 @@ musicEnd
 musicEntriesCount dw ( musicEnd - musicStart ) / 6	; 6 bytes per entry
 	
 background_definition:
-		include "../06_paintzx_background/background_screen.asm"	; the background data is in this file
+		include "../background_screen.asm"	; the background data is in this file
 	
 donut		db %00111100	; an 8x8 image of our donut
 				db %01000010
