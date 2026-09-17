@@ -14,7 +14,7 @@
     
 
     "actionButtons": {
-        "defaultColor": "#ff0034", // Can also use string color names.
+        "defaultColor": "white", // Can also use string color names.
         "loadNpmCommands": false, // Disables automatic generation of actions for npm commands.
         "reloadButton": "♻️", // Custom reload button text or icon (default ↻). null value enables automatic reload on configuration change
         "inheritGlobalCommands": false, // In case you use workspace-scope settings, and want to also use User (global) scope settings, you might enable this
@@ -22,14 +22,14 @@
             {
                 "cwd": "${fileWorkspaceFolder}/${relativeFileDirname}",
                 "name": "Compile",
-                "color": "green",
+                "color": "white",
                 "singleInstance": true,
                 "command": "sjasmplus --sld=main.sld --fullpath main.asm"
             },
             {
                 "cwd": "${fileWorkspaceFolder}/${relativeFileDirname}",
                 "name": "Debug",
-                "color": "green",
+                "color": "white",
                 "singleInstance": true,
                 "useVsCodeApi": true,
                 "command": "workbench.action.debug.restart"

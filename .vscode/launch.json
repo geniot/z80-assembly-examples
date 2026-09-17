@@ -25,7 +25,6 @@
             "commandsAfterLaunch": [],
             "rootFolder": "${fileWorkspaceFolder}/${relativeFileDirname}",
             //"topOfStack": "main",
-            //"load": "z80-sample-program.sna",
             "load": "main.sna",
             "smallValuesMaximum": 513,
             "tmpDir": ".tmp"
