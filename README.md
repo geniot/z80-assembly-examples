@@ -12,3 +12,10 @@
 This repository was started for self study, feel free to contribute. 
 
 I am also adding README files for each example separately. 
+
+
+### Links
+- [zxs-assembly-tutorial](https://github.com/SlithyMatt/zxs-assembly-tutorial)
+- [Sebastian Mihai's LibZX](http://sebastianmihai.com/libzx.html)
+- [ZX Spectrum Next Assembly Developer Guide](https://github.com/tomaz/zx-next-dev-guide)
+- [A Brief z80 Assembly Tutorial](https://solhsa.com/z80/index.html)
