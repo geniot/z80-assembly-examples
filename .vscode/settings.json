@@ -1,5 +1,5 @@
 {
-    "workbench.colorTheme": "Light Modern",
+    "workbench.colorTheme": "Visual Studio Dark",
     "asm-code-lens.assembler": "sjasmplus (z80)",
     "files.associations": {
         "*.{asm,inc,s,----------------------------------------------------}": "asm-z80-sjasmplus",
