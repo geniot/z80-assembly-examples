@@ -7,113 +7,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>z80 assembly examples</title>
     <link rel="icon" type="image/x-icon" href="/docs/favicon.ico">
+    <link rel="stylesheet" href="docs/styles.css">
 
     <script src="docs/resizable.js"></script>
     <script src="docs/jsspeccy/jsspeccy.js"></script>
-
-    <style>
-        html,
-        body {
-            height: 100%;
-            margin: 0;
-            padding: 0;
-            top: 0;
-            left: 0;
-        }
-
-
-        #jsspeccy {
-            width: 640px;
-            margin: auto;
-            background-color: white;
-        }
-
-        #myparent {
-            display: table;
-            height: 100%;
-            width: 100%;
-        }
-
-        #mychild {
-            display: table-cell;
-            vertical-align: middle;
-            width: 100%;
-        }
-
-        #win1,
-        #win2 {
-            background-color: #ffffff;
-        }
-
-        .contentWindow {
-            position: absolute;
-            background-color: #B4E0DE;
-        }
-
-        .resizer {
-            position: absolute;
-            z-index: 100;
-            background-color: #4E6160;
-        }
-
-        .verticalResizer {
-            cursor: ns-resize;
-        }
-
-        .horizontalResizer {
-            cursor: ew-resize;
-        }
-
-        .github-icon svg {
-            fill: #A486BC;
-        }
-
-        .github-corner:hover .octo-arm {
-            animation: octocat-wave 560ms ease-in-out;
-        }
-
-        @keyframes octocat-wave {
-            0%, 100% {
-                transform: rotate(0);
-            }
-            20%, 60% {
-                transform: rotate(-25deg);
-            }
-            40%, 80% {
-                transform: rotate(10deg);
-            }
-        }
-
-        @media (max-width: 500px) {
-            .github-corner:hover .octo-arm {
-                animation: none;
-            }
-
-            .github-corner .octo-arm {
-                animation: octocat-wave 560ms ease-in-out;
-            }
-        }
-
-        .shadowed {
-            box-shadow: 0 10px 16px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19) !important;
-        }
-
-
-        .svg {
-            z-index: 50;
-            right: 0;
-            top: 0;
-            position: absolute;
-            display: block;
-            vertical-align: middle;
-        }
-    </style>
 
 </head>
 
 <body>
 
-    <a target="_blank" href="https://github.com/geniot/z80-assembly-examples" class="github-corner" aria-label="Z80 Assembly Examples on GitHub">
+    <a target="_blank" href="https://github.com/geniot/z80-assembly-examples" class="github-corner"
+        aria-label="Z80 Assembly Examples on GitHub">
         <svg width="70" height="70" class="svg" viewBox="0 0 250 250" aria-hidden="true">
             <path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path>
             <path
@@ -127,45 +31,47 @@
 
     <div id="main">
         <div class="resizable-left" id="win1">
-            <div style="padding-left:20px;height:100%;
-        display: flex;flex-direction: column;row-gap: 0;overflow-y: scroll;overflow-x: hidden;">
-                <a href="#" onclick="emu.openUrl('01_beginner/hello_world/main.sna')">Hello World!</a>
-                <a href="#" onclick="emu.openUrl('01_beginner/frame_counter/main.sna')">Frame Counter</a>
-                <a href="#" onclick="emu.openUrl('02_intermediate/colored_lines/main.sna')">Colored Lines</a>
-                <a href="#" onclick="emu.openUrl('03_advanced/fire/main.sna')">Fire</a>
-
-                <span>LibZX</span>
+            <div
+                style="padding-left:20px;height:100%; display: flex;flex-direction: column;row-gap: 0;overflow-y: scroll;overflow-x: hidden;">
+                <span>Tutorials</span>
                 <div style="display: flex;flex-direction: column;padding-left:20px;">
-                    <a href="#" onclick="emu.openUrl('02_intermediate/libzx/00_text_output/main.sna')">Text Output</a>
-                    <a href="#" onclick="emu.openUrl('02_intermediate/libzx/01_keyboard/main.sna')">Keyboard</a>
-                    <a href="#" onclick="emu.openUrl('02_intermediate/libzx/02_moving_sprite/main.sna')">Moving
-                        Sprites</a>
-                    <a href="#" onclick="emu.openUrl('02_intermediate/libzx/03_random_number/main.sna')">Random
-                        Number</a>
-                    <a href="#" onclick="emu.openUrl('02_intermediate/libzx/04_sound_effects/main.sna')">Sound
-                        Effects</a>
-                    <a href="#" onclick="emu.openUrl('02_intermediate/libzx/05_color_cycling/main.sna')">Color
-                        Cycling</a>
-                    <a href="#" onclick="emu.openUrl('02_intermediate/libzx/06_paintzx_background/main.sna')">PaintZX
-                        Background</a>
-                    <a href="#" onclick="emu.openUrl('02_intermediate/libzx/07_demo/main.sna')">Demo</a>
+                    <a href="#" onclick="emu.openUrl('tutorials/01_beginner/hello_world/main.sna')">Hello World!</a>
+                    <a href="#" onclick="emu.openUrl('tutorials/01_beginner/frame_counter/main.sna')">Frame Counter</a>
+                    <a href="#" onclick="emu.openUrl('tutorials/02_intermediate/colored_lines/main.sna')">Colored Lines</a>
+                    <span>LibZX</span>
+                    <div style="display: flex;flex-direction: column;padding-left:20px;">
+                        <a href="#" onclick="emu.openUrl('tutorials/02_intermediate/libzx/00_text_output/main.sna')">Text
+                            Output</a>
+                        <a href="#" onclick="emu.openUrl('tutorials/02_intermediate/libzx/01_keyboard/main.sna')">Keyboard</a>
+                        <a href="#" onclick="emu.openUrl('tutorials/02_intermediate/libzx/02_moving_sprite/main.sna')">Moving
+                            Sprites</a>
+                        <a href="#" onclick="emu.openUrl('tutorials/02_intermediate/libzx/03_random_number/main.sna')">Random
+                            Number</a>
+                        <a href="#" onclick="emu.openUrl('tutorials/02_intermediate/libzx/04_sound_effects/main.sna')">Sound
+                            Effects</a>
+                        <a href="#" onclick="emu.openUrl('tutorials/02_intermediate/libzx/05_color_cycling/main.sna')">Color
+                            Cycling</a>
+                        <a href="#"
+                            onclick="emu.openUrl('tutorials/02_intermediate/libzx/06_paintzx_background/main.sna')">PaintZX
+                            Background</a>
+                        <a href="#" onclick="emu.openUrl('tutorials/02_intermediate/libzx/07_demo/main.sna')">Demo</a>
+                    </div>
                 </div>
-
-
-
-
+                <span>Demos</span>
+                <div style="display: flex;flex-direction: column;padding-left:20px;">
+                    <a href="#" onclick="emu.openUrl('demos/fire/main.sna')">Fire</a>
+                </div>
                 <span>Games</span>
                 <div style="display: flex;flex-direction: column;padding-left:20px;">
-                    <a href="#" onclick="emu.openUrl('games/tetris2/main.sna')">Tetris2</a>
-                    <a href="#" onclick="emu.openUrl('games/batty/main.sna')">Batty</a>
-                    <a href="#" onclick="emu.openUrl('games/stone_walk/main.sna')">Stone Walk</a>
                     <a href="#" onclick="emu.openUrl('games/atic-atac/main.sna')">Atic-Atac</a>
-                    <a href="#" onclick="emu.openUrl('games/manic_miner/main.sna')">Manic Miner</a>
+                    <a href="#" onclick="emu.openUrl('games/batty/main.sna')">Batty</a>
                     <a href="#" onclick="emu.openUrl('games/jetpac/main.sna')">Jetpac</a>
+                    <a href="#" onclick="emu.openUrl('games/manic_miner/main.sna')">Manic Miner</a>
+                    <a href="#" onclick="emu.openUrl('games/stone_walk/main.sna')">Stone Walk</a>
                     <a href="#" onclick="emu.openUrl('games/stormbringer/main.sna')">Stormbringer</a>
+                    <a href="#" onclick="emu.openUrl('games/tetris2/main.sna')">Tetris2</a>
                     <a href="#" onclick="emu.openUrl('games/through_the_trap_door/main.sna')">Through the Trap Door</a>
                 </div>
-
             </div>
         </div>
         <div class="resizable-right" id="win2">

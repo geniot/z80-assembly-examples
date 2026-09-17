@@ -1,0 +1,101 @@
+html,
+body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    top: 0;
+    left: 0;
+}
+
+
+#jsspeccy {
+    width: 640px;
+    margin: auto;
+    background-color: white;
+}
+
+#myparent {
+    display: table;
+    height: 100%;
+    width: 100%;
+}
+
+#mychild {
+    display: table-cell;
+    vertical-align: middle;
+    width: 100%;
+}
+
+#win1,
+#win2 {
+    background-color: #ffffff;
+}
+
+.contentWindow {
+    position: absolute;
+    background-color: #B4E0DE;
+}
+
+.resizer {
+    position: absolute;
+    z-index: 100;
+    background-color: #4E6160;
+}
+
+.verticalResizer {
+    cursor: ns-resize;
+}
+
+.horizontalResizer {
+    cursor: ew-resize;
+}
+
+.github-icon svg {
+    fill: #A486BC;
+}
+
+.github-corner:hover .octo-arm {
+    animation: octocat-wave 560ms ease-in-out;
+}
+
+@keyframes octocat-wave {
+
+    0%,
+    100% {
+        transform: rotate(0);
+    }
+
+    20%,
+    60% {
+        transform: rotate(-25deg);
+    }
+
+    40%,
+    80% {
+        transform: rotate(10deg);
+    }
+}
+
+@media (max-width: 500px) {
+    .github-corner:hover .octo-arm {
+        animation: none;
+    }
+
+    .github-corner .octo-arm {
+        animation: octocat-wave 560ms ease-in-out;
+    }
+}
+
+.shadowed {
+    box-shadow: 0 10px 16px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19) !important;
+}
+
+
+.svg {
+    z-index: 50;
+    right: 0;
+    top: 0;
+    position: absolute;
+    display: block;
+    vertical-align: middle;
+}
