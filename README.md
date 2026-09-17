@@ -11,8 +11,6 @@
 
 This repository was started for self study, feel free to contribute. 
 
-I am also adding README files for each example separately. 
-
 
 ### Links
 - [zxs-assembly-tutorial](https://github.com/SlithyMatt/zxs-assembly-tutorial)
