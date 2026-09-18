@@ -35,50 +35,51 @@
                 style="padding-left:20px;height:100%; display: flex;flex-direction: column;row-gap: 0;overflow-y: scroll;overflow-x: hidden;">
                 <span>Tutorials</span>
                 <div style="display: flex;flex-direction: column;padding-left:20px;">
-                    <a href="#" onclick="emu.openUrl('tutorials/01_beginner/hello_world/main.sna')">Hello World!</a>
-                    <a href="#" onclick="emu.openUrl('tutorials/01_beginner/frame_counter/main.sna')">Frame Counter</a>
-                    <a href="#" onclick="emu.openUrl('tutorials/02_intermediate/colored_lines/main.sna')">Colored Lines</a>
+                    <a href="#" onclick="openUrl('tutorials/01_beginner/hello_world/main.sna')">Hello World!</a>
+                    <a href="#" onclick="openUrl('tutorials/01_beginner/frame_counter/main.sna')">Frame Counter</a>
+                    <a href="#" onclick="openUrl('tutorials/02_intermediate/colored_lines/main.sna')">Colored Lines</a>
                     <span>LibZX</span>
                     <div style="display: flex;flex-direction: column;padding-left:20px;">
-                        <a href="#" onclick="emu.openUrl('tutorials/02_intermediate/libzx/00_text_output/main.sna')">Text
+                        <a href="#" onclick="openUrl('tutorials/02_intermediate/libzx/00_text_output/main.sna')">Text
                             Output</a>
-                        <a href="#" onclick="emu.openUrl('tutorials/02_intermediate/libzx/01_keyboard/main.sna')">Keyboard</a>
-                        <a href="#" onclick="emu.openUrl('tutorials/02_intermediate/libzx/02_moving_sprite/main.sna')">Moving
+                        <a href="#" onclick="openUrl('tutorials/02_intermediate/libzx/01_keyboard/main.sna')">Keyboard</a>
+                        <a href="#" onclick="openUrl('tutorials/02_intermediate/libzx/02_moving_sprite/main.sna')">Moving
                             Sprites</a>
-                        <a href="#" onclick="emu.openUrl('tutorials/02_intermediate/libzx/03_random_number/main.sna')">Random
+                        <a href="#" onclick="openUrl('tutorials/02_intermediate/libzx/03_random_number/main.sna')">Random
                             Number</a>
-                        <a href="#" onclick="emu.openUrl('tutorials/02_intermediate/libzx/04_sound_effects/main.sna')">Sound
+                        <a href="#" onclick="openUrl('tutorials/02_intermediate/libzx/04_sound_effects/main.sna')">Sound
                             Effects</a>
-                        <a href="#" onclick="emu.openUrl('tutorials/02_intermediate/libzx/05_color_cycling/main.sna')">Color
+                        <a href="#" onclick="openUrl('tutorials/02_intermediate/libzx/05_color_cycling/main.sna')">Color
                             Cycling</a>
                         <a href="#"
-                            onclick="emu.openUrl('tutorials/02_intermediate/libzx/06_paintzx_background/main.sna')">PaintZX
+                            onclick="openUrl('tutorials/02_intermediate/libzx/06_paintzx_background/main.sna')">PaintZX
                             Background</a>
-                        <a href="#" onclick="emu.openUrl('tutorials/02_intermediate/libzx/07_demo/main.sna')">Demo</a>
+                        <a href="#" onclick="openUrl('tutorials/02_intermediate/libzx/07_demo/main.sna')">Demo</a>
                     </div>
                 </div>
                 <span>Demos</span>
                 <div style="display: flex;flex-direction: column;padding-left:20px;">
-                    <a href="#" onclick="emu.openUrl('demos/fire/main.sna')">Fire</a>
+                    <a href="#" onclick="openUrl('demos/fire/main.sna')">Fire</a>
                 </div>
                 <span>Games</span>
                 <div style="display: flex;flex-direction: column;padding-left:20px;">
-                    <a href="#" onclick="emu.openUrl('games/atic-atac/main.sna')">Atic-Atac</a>
-                    <a href="#" onclick="emu.openUrl('games/batty/main.sna')">Batty</a>
-                    <a href="#" onclick="emu.openUrl('games/exolon/main.sna')">Exolon</a>
-                    <a href="#" onclick="emu.openUrl('games/jetpac/main.sna')">Jetpac</a>
-                    <a href="#" onclick="emu.openUrl('games/manic_miner/main.sna')">Manic Miner</a>
-                    <a href="#" onclick="emu.openUrl('games/stone_walk/main.sna')">Stone Walk</a>
-                    <a href="#" onclick="emu.openUrl('games/stormbringer/main.sna')">Stormbringer</a>
-                    <a href="#" onclick="emu.openUrl('games/tetris2/main.sna')">Tetris2</a>
-                    <a href="#" onclick="emu.openUrl('games/through_the_trap_door/main.sna')">Through the Trap Door</a>
+                    <a href="#" onclick="openUrl('games/atic-atac/main.sna')">Atic-Atac</a>
+                    <a href="#" onclick="openUrl('games/batty/main.sna')">Batty</a>
+                    <a href="#" onclick="openUrl('games/exolon/main.sna')">Exolon</a>
+                    <a href="#" onclick="openUrl('games/jetpac/main.sna')">Jetpac</a>
+                    <a href="#" onclick="openUrl('games/manic_miner/main.sna')">Manic Miner</a>
+                    <a href="#" onclick="openUrl('games/stone_walk/main.sna')">Stone Walk</a>
+                    <a href="#" onclick="openUrl('games/stormbringer/main.sna')">Stormbringer</a>
+                    <a href="#" onclick="openUrl('games/tetris2/main.sna')">Tetris2</a>
+                    <a href="#" onclick="openUrl('games/through_the_trap_door/main.sna')">Through the Trap Door</a>
                 </div>
             </div>
         </div>
         <div class="resizable-right" id="win2">
             <div id="myparent">
-                <div id="mychild">
+                <div style="height:100%;display: flex;flex-direction: column;align-items: center;justify-content: center;" id="mychild">
                     <div id="jsspeccy"></div>
+                    <div style="padding-top:5px;" id="link-to-code"></div>
                 </div>
             </div>
         </div>
@@ -87,6 +88,14 @@
 </body>
 
 <script>
+
+    function openUrl(url) {
+        var prefix = 'https://github.com/geniot/z80-assembly-examples/tree/main/';
+        var linkToCode = url.substring(0, url.lastIndexOf('/') + 1);
+        document.getElementById('link-to-code').innerHTML = '<a href="' + prefix+ linkToCode + 
+        '" target="_blank">'+ prefix+linkToCode +'</a>';
+        emu.openUrl(url);
+    }
 
     document.addEventListener("DOMContentLoaded", () => {
         //...
