@@ -5,6 +5,9 @@
 
 
 main:
+  ; You want to write your message to the upper screen
+  ; ld a,2;	      ; upper screen
+  ; call $1601    ; open the channel
   ld bc, MY_STRING
 
 PRINT_LOOP:
