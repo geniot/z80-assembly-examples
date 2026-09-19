@@ -11,7 +11,7 @@ PRINT_LOOP:
   ld a, (bc)
   cp 0
   jr z, END_PROGRAM
-  rst 16 ; https://skoolkid.github.io/rom/dec/asm/16.html
+  rst $10 ; https://skoolkid.github.io/rom/asm/0010.html
   inc bc
   jr PRINT_LOOP
 
