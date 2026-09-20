@@ -8,7 +8,7 @@
             "remoteType": "zsim",
             "zsim": {
                 "preset": "spectrum",
-                "memoryModel": "ZX48K",
+                "memoryModel": "ZX128K",
                 "zxBeeper": true
             },
             "sjasmplus": [
@@ -24,7 +24,7 @@
             "startAutomatically": false,
             "commandsAfterLaunch": [],
             "rootFolder": "${fileWorkspaceFolder}/${relativeFileDirname}",
-            //"topOfStack": "main",
+            //"topOfStack": "$d26d",
             "load": "main.sna",
             "smallValuesMaximum": 513,
             "tmpDir": ".tmp"
@@ -70,7 +70,7 @@
             "startAutomatically": false,
             "commandsAfterLaunch": [],
             "rootFolder": "${fileWorkspaceFolder}/${relativeFileDirname}",
-            "topOfStack": "main",
+            //"topOfStack": "main",
             //"load": "z80-sample-program.sna",
             "load": "main.sna",
             "smallValuesMaximum": 513,

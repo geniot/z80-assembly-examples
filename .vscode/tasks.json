@@ -30,7 +30,7 @@
         {
             "label": "start zesarux",
             "type": "shell",
-            "command": "./zesarux",
+            "command": "/opt/ZEsarUX-13.0/zesarux",
             "args": [
                 "--noconfigfile",           // Do not load configuration file
                 "--machine", "tbblue",      // Emulate ZX Next
@@ -42,7 +42,7 @@
                 "--esxdos-root-dir", "."    // Set ESXDOS root directory
             ],
             "options": {
-                "cwd": "${config:zesarux_dir}",
+                "cwd": "/opt/ZEsarUX-13.0/",
             },
             "detail": "zesarux --noconfigfile --machine tbblue --tbblue-fast-boot-mode --snap-no-change-machine --enable-esxdos-handler --enable-remoteprotocol --disable-autoframeskip --esxdos-root-dir .",
             "problemMatcher": []
