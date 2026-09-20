@@ -9082,3 +9082,5 @@ main.asm|21||0|2|32780|L|,END_PROGRAM,,+used
 main.asm|22||0|2|32780|T|
 main.asm|24||0|2|32781|F|MY_STRING
 main.asm|24||0|2|32781|L|,MY_STRING,,+used
+main.asm|32||0|2|32796|F|END_OF_PROGRAM
+main.asm|32||0|2|32796|L|,END_OF_PROGRAM,,+used
