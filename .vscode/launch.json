@@ -26,6 +26,7 @@
             "rootFolder": "${fileWorkspaceFolder}/${relativeFileDirname}",
             //"topOfStack": "$d26d",
             "load": "main.sna",
+            "load2": "tilt_from_start.sna",
             "smallValuesMaximum": 513,
             "tmpDir": ".tmp"
         },
