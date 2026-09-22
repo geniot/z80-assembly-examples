@@ -2,9 +2,9 @@
 ;
 ; These lower two bytes of frame counter are incremented every 20 ms.
 
-SYSVAR_FRAMES EQU $5c78
+SYSVAR_FRAMES EQU $5C78
 
-  ORG $5ccb
+  ORG $5CCB
 
 ; Stack: 37 bytes of memory allocated for use as the system stack.
 stack_memory:
@@ -567,9 +567,9 @@ PlayerTurnEnds:
   ld hl,jetman_thruster_anim_state ; HL=Jetman thruster animation object
   ld b,$0a                ; Reset all object states to be inactive
   call SetObjectInactive  ;
-  ld hl,$5d3c
+  ld hl,rocket_module_state+$04 ; HL=Rocket module "state" field
   res 1,(hl)              ; Set to unused state
-  ld hl,$5d44
+  ld hl,item_state+$04    ; HL=Collectible item "state" field
   res 1,(hl)              ; Set to unused state
 ; Check if current and inactive player has lives, if not it is game over.
   ld a,(game_options)     ; Game Options
@@ -593,7 +593,7 @@ PlayerTurnEnds_1:
   cpl                          ; and $FF)
   ld (current_player_number),a ;
 ; Switch rocket objects data for this new player
-  ld a,($5d34)
+  ld a,(rocket_state+$04) ; Rocket module "state" field
   rlca                    ; Calculate the offset
   rlca                    ;
   rlca                    ;
@@ -605,7 +605,7 @@ PlayerTurnEnds_1:
 PlayerTurnEnds_2:
   ld a,$b1                ; ASCII character for the number "1" + EOL bit
 PlayerTurnEnds_3:
-  ld ($6173),a
+  ld (game_over_text+$12),a ; Append the number to game over text
   call ResetScreen        ; Initialise level screen
   ld de,game_over_text    ; Game Over message
   ld hl,$7038             ; Y,X coords in the display file
@@ -761,7 +761,7 @@ StartGame_0:
 ; Used by the routine at PlayerTurnEnds.
 ResetGame:
   di                      ; Interrupts are disabled for the core engine code
-  ld sp,hi_score
+  ld sp,stack_memory+$25  ; Set the stack pointer
   call ResetScreen        ; Reset the screen
   ld a,$04
   ld (jetman_velocity_modifier),a ; Reset velocity modifier to its default
@@ -797,7 +797,7 @@ MenuScreen_3:
   ld a,d                  ; Update the Game options
   ld (game_options),a     ;
 ; Update flashing state of the menu items.
-  ld hl,$6262             ; Point HL to main menu colour attributes list.
+  ld hl,menu_colour_table+$01 ; Point HL to main menu colour attributes list.
   ld a,(game_options)     ; C=Game options
   ld c,a                  ;
   bit 0,c                 ; Jump if player count = 2
@@ -966,7 +966,7 @@ NewGame:
 ;
 ; Used by the routine at NewActor.
 MainLoopResetStack:
-  ld sp,hi_score
+  ld sp,stack_memory+$25  ; Set the stack pointer
   ei
   ld ix,rocket_state      ; IX=Rocket object
   xor a
@@ -1054,9 +1054,9 @@ UpdateHiScore:
   sbc hl,de
   jr c,UpdateHiScore_0    ; Jump if score P2 > P1, else
   jr nz,UpdateHiScore_5   ; Jump if score P1 > P2, else P1==P2, so no jump
-  ld a,($5cf6)            ; E=3rd byte of the P1 score
+  ld a,(p1_score+$02)     ; E=3rd byte of the P1 score
   ld e,a                  ;
-  ld a,($5cf9)            ; A=3rd byte of the P2 score
+  ld a,(p2_score+$02)     ; P2 score
   cp e
   jr c,UpdateHiScore_5    ; Jump if score of P2 < P1 (set's HL to P1 score)
 ; Inactive player has the highest score.
@@ -1392,7 +1392,7 @@ CarryRocketItem:
   ld hl,(jetman_pos_x)    ; Update module position so it becomes attached to
   ld (ix+$01),l           ; the player via the Jetman Y,X positions
   ld (ix+$02),h           ;
-  ld a,($5d31)
+  ld a,(rocket_state+$01) ; Rocket X position
   sub (ix+$01)            ; Subtract module X position
   jp p,CarryRocketItem_0  ; If already negative, jump
   neg                     ; else make a negative value
@@ -1400,7 +1400,7 @@ CarryRocketItem_0:
   cp $06                  ; Draw sprite if A >= 6
   jr nc,RedrawSprite      ;
   set 2,(ix+$04)          ; Set Jetman state to have collected the item
-  ld a,($5d31)
+  ld a,(rocket_state+$01) ; Rocket: X position
   ld (ix+$01),a           ; Update module X position to be same as Rocket
                           ; position
   jr RedrawSprite         ; Update module and draw sprite
@@ -1418,12 +1418,12 @@ PickupRocketItem:
   add a,(ix+$02)          ; Add item Y position
   cp $b7
   jp c,IncYRedrawSprite   ; Increment item Y position and draw sprite if < 183
-  ld a,($5d3c)
+  ld a,(rocket_module_state+$04)
   or $01
-  ld ($5d3c),a
-  ld a,($5d34)
+  ld (rocket_module_state+$04),a ; Set module "state" to collected
+  ld a,(rocket_state+$04) ; A=Rocket "state" value
   inc a
-  ld ($5d34),a
+  ld (rocket_state+$04),a ; Update rocket "state" value
   ld a,(ix+$06)           ; Item sprite jump table offset
   add a,$08
   call BufferCopyRocket   ; Copy rocket sprite to buffers
@@ -1436,9 +1436,9 @@ PickupRocketItem_1:
   ld a,(ix+$02)           ; Item Y position of fuel pod
   cp $b0                  ; Has it reached the rocket yet?
   jp c,IncYRedrawSprite   ; Move the fuel cell down one pixel if not
-  ld a,($5d35)
+  ld a,(rocket_state+$05) ; A=rocket fuel pod count
   inc a
-  ld ($5d35),a
+  ld (rocket_state+$05),a ; Increment rocket fuel pod count
   jr PickupRocketItem_0   ; Loop back and repeat
 
 ; Release new collectible item.
@@ -1461,7 +1461,7 @@ ItemNewCollectible:
   ret nz                  ; Return if between 1-127
   ldir
   call ItemCalcDropColumn ; A=column to drop item
-  ld ($5d41),a
+  ld (item_state+$01),a   ; Update item X position
   ld a,r                  ; Get random number
   and $0e                 ; A=2, 4, 6, 8, 10, 12, or 14
   bit 3,a                   ; Jump if bit-3 is already reset
@@ -1469,7 +1469,7 @@ ItemNewCollectible:
   and $08                 ; else set bit-3
 ItemNewCollectible_0:
   or $20                  ; Make sure bit-5 (32) is set
-  ld ($5d46),a
+  ld (item_state+$06),a   ; Update item with new jump table offset
   ret
 
 ; Calculate column on which to drop a new collectible item/fuel pod.
@@ -1507,7 +1507,7 @@ ItemNewFuelPod:
   ld a,(de)               ; Return if currently in use
   and a                   ;
   ret nz                  ;
-  ld a,($5d35)
+  ld a,(rocket_state+$05) ; A=Rocket fuel Pod count
   cp $06
   ret nc                  ; Return if fuel collected >= 6
   ld a,(game_timer)       ; Game timer
@@ -1516,7 +1516,7 @@ ItemNewFuelPod:
   ret nz                  ; Return if A is between 1-15
   ldir
   call ItemCalcDropColumn ; A=column to drop item
-  ld ($5d39),a
+  ld (rocket_module_state+$01),a ; Update fuel pod X position
   ret
 
 ; Reset the Rocket modules state data ready for next level.
@@ -1551,7 +1551,7 @@ RocketAnimateFlames:
   ld a,(ix+$02)           ; Add 21 to rocket Y position
   add a,$15               ;
   ld (ix+$02),a           ;
-  ld hl,$5dc1
+  ld hl,actor+$01         ; HL=Actor Y position
   ld a,(hl)               ; Add 21 to actor Y position
   add a,$15               ;
   ld (hl),a               ;
@@ -1579,7 +1579,7 @@ RocketAnimateFlames_1:
   ld a,(ix+$02)           ; Subtract $15 from rocket Y position
   sub $15                 ;
   ld (ix+$02),a           ;
-  ld hl,$5dc1
+  ld hl,actor+$01         ; HL=Actor Y position
   ld a,(hl)               ; Subtract 21 from actor Y position
   sub $15                 ;
   ld (hl),a               ;
@@ -1683,17 +1683,17 @@ UpdateRocketColour_0:
   ld a,(ix+$02)           ; Subtract 16 from a rocket Y position
   sub $10                 ;
   ld (ix+$02),a           ;
-  ld a,($5dc1)
+  ld a,(actor+$01)        ; A=Actor Y position
   sub $10                 ; Subtract 16 from Actor Y position
-  ld ($5dc1),a
+  ld (actor+$01),a        ; Update Actor Y position
   ld a,c
   add a,$04
   ld c,a
   djnz UpdateRocketColour_0 ; Loop and update rocket/actor again
   ld a,$02
-  ld ($5dc4),a
+  ld (actor+$04),a        ; Actor width = 2
   xor a
-  ld ($5dc3),a
+  ld (actor+$03),a        ; Actor height = 0 (?)
   pop hl
   ld (ix+$02),h           ; Update rocket Y position: only Y changed in loop
                           ; above
@@ -2145,11 +2145,11 @@ FrameUpdate:
   push ix                 ; Backup main jump table address
 ; Do some the code modifying...
   ld hl,rocket_state      ; HL=points to the rocket object
-  ld ($697e),hl
+  ld (NewActor+$0d),hl    ; Modify `LD BC, nnnn` - rocket object
   ld a,$c3                ; Value is a `JP` opcode
-  ld ($699c),a
+  ld (NewActor+$2b),a     ; Modify instruction to be `JP`
   ld hl,ResetModifiedInFrame ; HL=address to be modified
-  ld ($699d),hl
+  ld (NewActor+$2c),hl    ; Modify `JP nnnn` address
 ; ...code modifying complete.
   ld ix,jetman_motion     ; IX=Jetman object
   jp MainLoop             ; Execute main loop
@@ -2159,11 +2159,12 @@ FrameUpdate:
 ; Used by the routines at NewGame and ResetModifiedInFrame.
 ResetModifiedCode:
   ld hl,inactive_jetman_state ; HL=inactive Jetman object
-  ld ($697e),hl
+  ld (NewActor+$0d),hl    ; Reset `LD BC, 5D30` to use HL
   ld a,$3a                ; Value is a `LD A (nnnn)` opcode
-  ld ($699c),a
+  ld (NewActor+$2b),a     ; Restore modified opcode to `LD A (nnnn)`
+                          ; instruction.
   ld hl,$0244
-  ld ($699d),hl
+  ld (NewActor+$2c),hl    ; Restore to `LD A (nnnn)` address to 0244
   ret
 
 ; Reset the modified code within the current frame.
@@ -2706,7 +2707,7 @@ ActorUpdateDir:
   ld a,(ix+$00)           ; Actor direction
   and $c0
   or $03
-  ld ($5dc2),a
+  ld (actor+$02),a        ; Update actor "direction"
   ret
 
 ; Update crossed space ship.
@@ -3581,10 +3582,10 @@ AddPointsToScore:
   ld a,(current_player_number) ; Use player 2 score if current player is 2
   and a                        ;
   jr nz,AddPointsToScore_0     ;
-  ld hl,$5cf6
+  ld hl,p1_score+$02      ; HL=Player 1 score byte #3
   jr AddPointsToScore_1
 AddPointsToScore_0:
-  ld hl,$5cf9
+  ld hl,p2_score+$02      ; HL=Player 2 score byte #3
 ; Add the points to the current score.
 AddPointsToScore_1:
   ld a,(hl)               ; Update score byte #3, with BCD conversion
@@ -3672,7 +3673,7 @@ DrawFontChar:
   add hl,hl               ; Calculate correct offset for ASCII character
   add hl,hl               ;
   add hl,hl               ;
-  ld de,$3c00
+  ld de,system_font-$0100 ; DE=base address of the font data - 256 bytes
   add hl,de               ; HL += base address
   ex de,hl                ; Store the character address in DE
   pop hl                  ; Restore HL
@@ -3854,9 +3855,9 @@ ColourizeSprite:
   exx
   ld hl,(actor_coords)    ; HL=actor coords
   call Coord2AttrFile     ; HL=coord to attribute file address (using HL)
-  ld a,($5dc4)
+  ld a,(actor+$04)        ; Actor state "width"
   ld b,a                  ; B=width loop counter (in pixels)
-  ld a,($5dc3)
+  ld a,(actor+$03)        ; Actor state "height"
   rrca
   rrca
   inc a
@@ -3959,7 +3960,7 @@ GetSpritePosition:
   ld b,a                  ;
   inc de                  ; A=next header value: sprite height
   ld a,(de)               ;
-  ld ($5dc5),a
+  ld (actor+$05),a        ; Set Actor height to header height value
 
 ; Increment DE to beginning of next sprite header.
 ;
@@ -3971,7 +3972,7 @@ NextSprite:
 
 ; Find actor sprite address and update actor.
 ;
-; Used by the routines at UpdateAndEraseActor and 727d.
+; Used by the routines at UpdateAndEraseActor and 727D.
 FindActorSpriteAndUpdate:
   call ActorMoveSprite    ; Find actor position.
 
@@ -3998,11 +3999,11 @@ ActorUpdate:
   call Coord2Scr          ; HL=coord to screen address (using HL)
   ld a,(de)               ; B=sprite width
   ld b,a                  ;
-  ld ($5dc4),a
+  ld (actor+$04),a        ; Actor width=sprite width
   inc de                  ; A=next header value: sprite height
   ld a,(de)               ;
-  ld ($5dc6),a
-  ld ($5dc3),a
+  ld (actor+$06),a        ; Set Actor sprite height
+  ld (actor+$03),a        ; Set Actor height to sprite height
   jr NextSprite           ; Set return values (DE points to sprite pixel data)
 
 ; Update Actor X/Y positions.
@@ -4032,22 +4033,22 @@ UpdateAndEraseActor:
 ;
 ; Input:IX Actor object.
 ActorEraseMovedSprite:
-  ld a,($5dc1)
+  ld a,(actor+$01)        ; A=actor Y position
   sub (ix+$02)            ; Subtract the actor Y position
   jp z,ActorUpdateSize    ; Update actor size if 0
   jp m,ActorEraseMovedSprite_0 ; Jump if result is negative
   ld c,a                  ; else C=result
-  ld a,($5dc5)
+  ld a,(actor+$05)        ; A=actor current sprite height
   cp c
   jp c,ActorUpdateSize    ; Update actor size if REGa < C
   sub c                   ; else subtract C
-  ld ($5dc5),a
+  ld (actor+$05),a        ; Update actor current sprite height
   jp MaskSprite           ; Mask sprite pixels
 ActorEraseMovedSprite_0:
   exx
   neg
   ld c,a
-  ld a,($5dc6)
+  ld a,(actor+$06)        ; A=actor sprite height
   cp c
   jp c,ActorUpdateSizeFlipReg ; Update actor size if < C
   sub c
@@ -4082,8 +4083,8 @@ ActorEraseDestroyed:
   exx
   xor a
   ld c,a
-  ld ($5dc6),a
-  ld ($5dc3),a
+  ld (actor+$06),a        ; Actor sprite height = $00
+  ld (actor+$03),a        ; Actor "height" = $00
   exx
   jp MaskSprite           ; Mask sprite pixels
 
@@ -4096,7 +4097,7 @@ ActorEraseDestroyed:
 EraseAnimationSprite:
   exx
   xor a
-  ld ($5dc5),a
+  ld (actor+$05),a        ; Actor current sprite height = $00
   ld c,a                  ; C = $00
   jp MaskSprite           ; Mask sprite pixels
 
@@ -4107,7 +4108,7 @@ ActorFindPosDir:
   ld a,(actor)            ; A=actor X position
   and $06
   ld c,a
-  ld a,($5dc2)
+  ld a,(actor+$02)        ; A=actor movement direction
 
 ; Get actor sprite address.
 ;
@@ -4228,10 +4229,10 @@ TmpActorPosUpdate:
   ld a,(ix+$01)           ; Actor X position = Jetman X position
   ld (actor),a            ;
   ld a,(ix+$02)
-  ld ($5dc1),a
+  ld (actor+$01),a        ; Actor Y position = Jetman Y position
   ld a,(ix+$00)           ; Set Actor direction to Jetman (chase him!)
-  ld ($5dc2),a            ;
-  ret
+  ld (actor+$02),a        ;
+  ret                     ;
 
 ; Joystick Input (Interface 2)
 ;
@@ -4425,7 +4426,7 @@ JetmanFlyHorizontal:
   add hl,hl               ;
   add hl,hl               ;
   ld d,(ix+$01)           ; D=Jetman X position
-  ld a,($5dc7)
+  ld a,(actor+$07)        ; Actor thrust
   ld e,a
   bit 6,(ix+$04)          ; Decrease Jetman X position if moving right
   jp nz,JetmanFlyDecX     ;
@@ -4440,7 +4441,7 @@ JetmanFlyHorizontal:
 ;       L New Thrust value.
 JetmanApplyGravity:
   ld a,l
-  ld ($5dc7),a
+  ld (actor+$07),a        ; Update Actor thrust
   ld (ix+$01),h           ; Set new Jetman X position
 ; Check if thruster is being aplpied
   ld a,(game_options)     ; Game options
@@ -4735,7 +4736,8 @@ jetmanLeavePlatform:
   and a                   ;
   jr nz,JetmanWalk_2      ;
   ld (ix+$00),$03         ; else set thrusters to be animating?
-  ld ($5d49),hl
+  ld (jetman_thruster_anim_state+$01),hl ; Update thruster animation Y,X
+                                         ; position
   call AnimationStateReset ; Update actor movement states
 JetmanWalk_2:
   pop ix                  ; Restore IX to Jetman object
@@ -5105,15 +5107,15 @@ ActorUpdateSizeFlipReg:
 ;
 ; Used by the routine at ActorEraseMovedSprite.
 ActorUpdateSize:
-  ld a,($5dc5)
+  ld a,(actor+$05)        ; Actor current sprite height
   ld c,a
-  ld a,($5dc6)
+  ld a,(actor+$06)        ; Actor sprite height
   or c                    ; Compare actor sprite height values
   ret z                   ; Return if both are zero
   xor a
-  ld ($5dc5),a
+  ld (actor+$05),a        ; Actor current sprite height = $00
   exx
-  ld a,($5dc6)
+  ld a,(actor+$06)        ; Actor sprite height
   ld c,a
   xor a
 
@@ -5121,7 +5123,7 @@ ActorUpdateSize:
 ;
 ; Used by the routine at ActorEraseMovedSprite.
 ActorUpdateHeightAndMask:
-  ld ($5dc6),a
+  ld (actor+$06),a        ; Update Actor sprite height
   exx
   jr MaskSprite           ; Mask sprite pixels
 

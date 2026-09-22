@@ -8,7 +8,7 @@
             "remoteType": "zsim",
             "zsim": {
                 "preset": "spectrum",
-                "memoryModel": "ZX128K",
+                "memoryModel": "ZX48K",
                 "zxBeeper": true
             },
             "sjasmplus": [
