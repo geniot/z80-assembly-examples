@@ -1,5 +1,6 @@
     SLDOPT COMMENT WPMEM, LOGPOINT, ASSERTION
-    DEVICE ZXSPECTRUM48
+    ;https://z00m128.github.io/sjasmplus/documentation.html#po_device
+    DEVICE ZXSPECTRUM48,$ff50 ;RAMTOP
     INCLUDE "48rom.asm"
     ORG $8000
 
