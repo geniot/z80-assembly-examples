@@ -1,5 +1,6 @@
     SLDOPT COMMENT WPMEM, LOGPOINT, ASSERTION
     DEVICE ZXSPECTRUM48
+    INCLUDE "48rom.asm"
     ORG     $8000           ; Program load address
 main:
        ei
@@ -61,7 +62,7 @@ SCRL2  RL    (HL)        ;shift all bytes sequentially
        DEC   C           ;repeat
        JR    NZ,SCRL1
        RET
-PR_AT  DEFB  22,21,31,16,0
+PR_AT  DEFB  22,21,31,16,0 ;_at,21,31,ink,black
 TEXT   DEFM  "Examine yourself how you know the assembler!"
        DEFB  0
 
