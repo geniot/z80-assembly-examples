@@ -35,3 +35,4 @@ All examples were found on the internet. I just made them compilable for _sjasmp
 - [Z80 Instruction Set](https://clrhome.org/table/)
 - [All Spectrum Links](https://zxaaa.net/SPISOK.html)
 - [Z80 Book](https://zx-editor.vercel.app/z80_book.html#using-the-routines)
+- [ZXPress](https://zxpress.ru/ru/books)
