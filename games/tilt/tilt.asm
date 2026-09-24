@@ -5126,7 +5126,7 @@
   ei                      ; Enable interrupts
   ld h,$15                ; h=$15
   call $c52c              ; CALL c52c
-  ld de,$df24             ; de=$df24
+  ld de,marquee_text             ; de=$df24
   ld hl,$1600             ; hl=$1600
   ld c,$07                ; c=$07
   ld a,(de)               ; a=PEEK de
@@ -5174,9 +5174,9 @@ main:
   dec hl                  ; hl=hl-1
   ld a,(hl)               ; a=PEEK hl
   cp $ff                  ; Set the zero flag if a=$ff, or the carry flag if
-                          ; a<$ff
+                          ; a<$ff, ff - is the end of marquee_text
   jr nz,$c19f             ; Jump to c19f if a<>$ff
-  ld hl,$df24             ; hl=$df24
+  ld hl,marquee_text             ; hl=$df24
   inc hl                  ; hl=hl+1
   ld ($dfe6),hl           ; POKE $dfe6,l; POKE $dfe7,h
   dec hl                  ; hl=hl-1
@@ -5208,18 +5208,20 @@ main:
   ld (de),a               ; POKE de,a
   ld ix,$dfe8             ; ix=$dfe8
   ld hl,$50df             ; hl=$50df
-  ld c,$08                ; c=$08
+  ld c,$08                ; c=$08 - eight lines
+move_one_pixel_line:
   rlc (ix+$00)            ; Rotate (ix+$00) left circular (copying bit 7 into
                           ; bit 0 and into the carry flag)
-  ld b,$20                ; b=$20
+  ld b,$20                ; b=$20 or 32 - number of characters on the screen
+move_one_character_line:
   rl (hl)                 ; Rotate (hl) left through the carry flag
   dec hl                  ; hl=hl-1
-  djnz $c1db              ; Decrement b and jump to c1db if b>0
+  djnz move_one_character_line; Decrement b and jump to c1db if b>0
   ld l,$df                ; l=$df
   inc h                   ; h=h+1
   inc ix                  ; ix=ix+1
   dec c                   ; c=c-1
-  jr nz,$c1d5             ; Jump to c1d5 if c>0
+  jr nz,move_one_pixel_line    ; Jump to c1d5 if c>0
   call $d2d2              ; CALL d2d2
   bit 0,c                 ; Set the zero flag if bit 0 of c is 0
   jp nz,$c17b             ; Jump to c17b if bit 0 of c is set
@@ -9196,6 +9198,7 @@ main:
   ld h,a                  ; h=a
   ret                     ; Return
 
+marquee_text:
 ; Data block at DF24
   defb $00,$40,$20,$06
 
