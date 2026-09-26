@@ -8,16 +8,25 @@
 - I am on [Ubuntu Linux](https://ubuntu.com/) if that matters
 - all examples are compilable with [sjasmplus](https://github.com/z00m128/sjasmplus)
 - I am using a VSCode extension called [Action Buttons](https://marketplace.visualstudio.com/items?itemName=seunlanlege.action-buttons) to compile and debug separately, see the setup in [.vscode/settings.json](/.vscode/settings.json) 
-- occasionally I am using [JSSpeccy](https://github.com/gasman/jsspeccy3), [ZEsarUX](https://github.com/chernandezba/zesarux), [ZXBareemulator](https://zxmini.speccy.org/en/index.html) and [ZX Spectrum MISTer](https://github.com/MiSTer-devel/ZX-Spectrum_MISTer) for external testing
+- occasionally I am using [JSSpeccy](https://github.com/gasman/jsspeccy3), [ZEsarUX](https://github.com/chernandezba/zesarux), [ZXBareemulator](https://zxmini.speccy.org/en/index.html) and even [ZX Spectrum MISTer](https://github.com/MiSTer-devel/ZX-Spectrum_MISTer) for external testing
 
 ___
 
 This repository was started for self study, feel free to contribute.
 
-All examples were found on the internet. I just made them compilable for _sjasmplus_.  
+All examples were found on the internet.
+
+The changes I have made:
+
+- made examples compilable for _sjasmplus_
+- added some comments for myself
+- refactored here and there (mostly added or renamed labels)
+
+See the history of commits.
 
 
 ### Links
+- [Skoolkit](https://github.com/skoolkid/skoolkit)
 - [zxs-assembly-tutorial](https://github.com/SlithyMatt/zxs-assembly-tutorial)
 - [Sebastian Mihai's LibZX](http://sebastianmihai.com/libzx.html)
 - [ZX Spectrum Next Assembly Developer Guide](https://github.com/tomaz/zx-next-dev-guide)
@@ -36,3 +45,4 @@ All examples were found on the internet. I just made them compilable for _sjasmp
 - [All Spectrum Links](https://zxaaa.net/SPISOK.html)
 - [Z80 Book](https://zx-editor.vercel.app/z80_book.html#using-the-routines)
 - [ZXPress](https://zxpress.ru/ru/books)
+- [Curso de Ensamblador Z8](https://wiki.speccy.org/cursos/ensamblador/indice)
