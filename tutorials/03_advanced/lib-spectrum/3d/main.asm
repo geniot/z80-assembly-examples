@@ -1,0 +1,438 @@
+;
+; Title:        3D Demo
+; Author:       Dean Belfield
+; Started:	01/04/2020
+; Last Updated:	11/04/2020
+;
+; Requires:	macros, vector, vector_filled, output, keyboard, screen_buffer, sound, sprite, math
+;
+; Modinfo:
+;
+; 11/04/2020:	Draws direct to screen if SCREEN_BUFFER is omitted
+
+			DEVICE ZXSPECTRUM48			; sjasmplus directive for SAVESNA at end
+
+Stack_Top:		EQU 0xFFF0
+Code_Start:		EQU 0x7FFD				
+
+			ORG Code_Start
+
+			JP Main
+
+SIN_TABLE:		LUA ALLPASS
+			for i = 0, 255 do
+				s = math.sin(i/128*math.pi)
+				t = s > 0 and 1 or s < 0 and -1 or 0
+				s = 2 * math.floor(math.abs(s)*128)
+				if t == -1 then s = s + 1 end
+				if s >= 256 then s = 255 end
+				_pc(string.format("DB %d", s))
+			end
+			ENDLUA
+
+			DEFINE SCREEN_BUFFER 0xE000		; Plot / draw to off-screen buffer
+
+SHAPE_BUFFER:		DS 256					; This should be aligned on a byte boundary
+POINT_BUFFER:		DS 16
+POLYGON_BUFFER:		DS 8,0
+SD:			EQU 256
+YC:			DW 0 
+XC:			DW 0
+ZC:			DW 256
+PHI:			DB 0
+THE:			DB 0
+PSI:			DB 0
+Debounce_Key:		DB 0xFF
+
+			include "../lib/macros.asm"
+			include "../lib/vector.asm"
+			include "../lib/vector_filled.asm"
+			include "../lib/output.asm"
+			include "../lib/keyboard.asm"
+			include "../lib/screen_buffer.asm"
+			include "../lib/sound.asm"
+			include "../lib/sprite.asm"
+			include "../lib/math.asm"
+
+Main:			DI
+			LD SP,Stack_Top
+			LD A,46h
+			CALL Clear_Screen
+			LD A,0
+			OUT (254),A
+			LD HL,Interrupt
+			LD IX,0xFFF0
+			LD (IX+04h),0xC3          		 ; Opcode for JP
+			LD (IX+05h),L
+			LD (IX+06h),H
+			LD (IX+0Fh),0x18           	 	; Opcode for JR; this will do JR to FFF4h
+			LD A,0x39
+			LD I,A
+			LD SP,0xFFF0
+			IM 2
+			EI
+	
+LOOP:			DI
+			IFDEF SCREEN_BUFFER
+			LD HL,SCREEN_BUFFER
+			ELSE
+			LD HL,0x4000
+			ENDIF
+			CALL Clear_Screen_Fast
+			LD HL,Vector_Texture_03
+			LD B,150
+			LD C,88
+			LD A,55
+			CALL Draw_Circle_Filled
+			LD IX,Cube
+			CALL Translate
+			CALL Draw_Shape
+			IFDEF SCREEN_BUFFER
+			LD HL,SCREEN_BUFFER
+			CALL Copy_Screen
+			ENDIF
+			EI
+
+			LD A,(THE): ADD A,3: LD (THE),A
+			LD A,(PSI): ADD A,1: LD (PSI),A
+			LD A,(PHI): ADD A,2: LD (PHI),A
+
+			JR LOOP
+
+; Handle user input
+;
+User_Interface:		CALL Read_Keyboard			; Read the keyboard
+			PUSH AF					; Stack the keypress
+			JR Z,User_Interface_End			; No keys pressed; jump to end
+
+			LD HL,Debounce_Key			; Check whether we've pressed this key before
+			CP (HL)				
+			JR Z,User_Interface_End			; Yes we have, so skip the debounced keys
+
+User_Interface_End:	POP AF					; Unstack the keypress
+			LD (Debounce_Key),A			; Store for debounce 
+			RET
+;
+; Interrupt routine
+;
+Interrupt:		DI
+			PUSH AF
+			PUSH BC
+			PUSH DE
+			PUSH HL
+			PUSH IX
+			EXX
+			EX AF,AF'
+			PUSH AF
+			PUSH BC
+			PUSH DE
+			PUSH HL
+			PUSH IY
+
+			LD A,(Debounce_Key)
+			AND A
+			JR Z,Interrupt_End
+
+Interrupt_End:		CALL User_Interface
+
+			POP IY
+			POP HL
+			POP DE
+			POP BC
+			POP AF
+			EXX
+			EX AF,AF'
+			POP IX
+			POP HL
+			POP DE
+			POP BC
+			POP AF
+			EI
+			RET
+
+; Render the shape
+; IX: Coordinate data
+;
+Draw_Shape:		LD IY,POINT_BUFFER
+			LD B,(IX+1)
+1:			LD DE,POINT_BUFFER
+			PUSH BC	
+			LD A,(IX+2)
+			ADD A,A
+			ADD A,A 
+			LD H,high SHAPE_BUFFER
+			LD L,A
+			LDI 
+			LDI 
+			LDI 
+			LDI 
+			LD A,(IX+3)
+			ADD A,A
+			ADD A,A 
+			LD H,high SHAPE_BUFFER
+			LD L,A
+			LDI 
+			LDI 
+			LDI 
+			LDI 
+			LD A,(IX+4)
+			ADD A,A
+			ADD A,A 
+			LD H,high SHAPE_BUFFER
+			LD L,A
+			LDI 
+			LDI 
+			LDI 
+			LDI 
+			LD A,(IX+5)
+			ADD A,A
+			ADD A,A 
+			LD H,high SHAPE_BUFFER
+			LD L,A
+			LDI 
+			LDI 
+			LDI 
+			LDI 
+			CALL Backface_Cull
+			LD L,(IX+6)
+			LD H,(IX+7)
+			CALL NZ,Draw_Polygon
+			LD BC,6 
+			ADD IX,BC 
+			POP BC
+			DJNZ 1B
+			RET 
+
+; Draw a polygon
+;
+Draw_Polygon:		LD A,(IY+0): LD (POLYGON_BUFFER+0),A
+			LD A,(IY+2): LD (POLYGON_BUFFER+1),A
+			LD A,(IY+4): LD (POLYGON_BUFFER+2),A
+			LD A,(IY+6): LD (POLYGON_BUFFER+3),A
+			LD A,(IY+8): LD (POLYGON_BUFFER+4),A
+			LD A,(IY+10): LD (POLYGON_BUFFER+5),A
+			LD A,(IY+12): LD (POLYGON_BUFFER+6),A
+			LD A,(IY+14): LD (POLYGON_BUFFER+7),A
+			PUSH IX 
+			PUSH IY
+			LD IY,POLYGON_BUFFER
+			CALL Draw_Quad_Filled
+			POP IY
+			POP IX
+			RET
+; Translate
+; IX: Coordinate data
+;
+Translate:		LD B,(IX+0)
+			XOR A
+			LD (DIVISOR+2),A
+			LD IY,SHAPE_BUFFER
+0:			PUSH BC 
+			LD E,(IX+3)
+			LD D,(IX+2)
+			LD A,(PHI)
+			CALL Trig_Rotate
+			LD E,A 
+			EX AF,AF 
+			PUSH AF 
+			LD D,(IX+1) 
+			LD A,(THE) 
+			CALL Trig_Rotate 
+			LD HL,(ZC)
+			CP 128 
+			CCF 
+			LD E,A
+			SBC A,A 
+			LD D,A 
+			SBC HL,DE 
+			LD (DIVISOR),HL 
+			EX AF,AF 
+			LD D,A 
+			POP AF 
+			LD E,A 
+			LD A,(PSI) 
+			CALL Trig_Rotate 
+			EX AF,AF 
+			PUSH AF 
+			EX AF,AF 
+
+			LD HL,(YC) 
+			CALL Perspective
+			LD DE,96
+			ADD HL,DE
+			LD (IY+2),L 
+			LD (IY+3),H 
+			POP AF
+			LD HL,(XC) 
+			CALL Perspective
+			LD DE,128
+			ADD HL,DE 
+			LD (IY+0),L
+			LD (IY+1),H 
+
+			LD BC,3
+			ADD IX,BC 
+			INC BC 
+			ADD IY,BC
+			POP BC 
+			DJNZ 0B
+			RET
+		
+Perspective:		CP 128 
+			CCF 
+			LD E,A 
+			SBC A,A 
+			LD D,A 
+			ADD HL,DE 
+			EX DE,HL
+			BIT 7,D 
+			JR Z,1F
+			XOR A
+			LD H,A 
+			LD L,A 
+			SBC HL,DE 
+			EX DE,HL 
+			LD BC,SD 
+			CALL MUL24 
+			LD (DIVIDEND+2),A 
+			LD (DIVIDEND),HL
+			CALL DIV24 
+			EX DE,HL 
+			LD HL,65535
+			AND A 
+			SBC HL,DE 
+			CPL 
+			LD DE,1
+			ADD HL,DE 
+			ADC A,0 
+			RET 
+1:			LD BC,SD 
+			CALL MUL24 
+			LD (DIVIDEND+2),A 
+			LD (DIVIDEND),HL 
+			JP DIV24 
+
+Backface_Cull:		LD BC,(POINT_BUFFER)
+			LD HL,(POINT_BUFFER+6)
+			LD DE,(POINT_BUFFER+10)
+			CALL 1F
+			PUSH AF 
+			PUSH HL 
+			LD BC,(POINT_BUFFER+4)
+			LD HL,(POINT_BUFFER+10)
+			LD DE,(POINT_BUFFER+2)
+			CALL 1F 
+			POP DE 
+			POP BC 
+			ADD HL,DE 
+			ADC A,B 
+			PUSH AF 
+			PUSH HL 
+			LD BC,(POINT_BUFFER+8)
+			LD HL,(POINT_BUFFER+2)
+			LD DE,(POINT_BUFFER+6)
+			CALL 1F
+			POP DE
+			POP BC 
+			ADD HL,DE
+			ADC A,B 
+			BIT 7,A 
+			RET 
+1:			OR A 
+			SBC HL,DE 
+			EX DE,HL 
+			JP M,2F
+			BIT 7,B 
+			JP Z,MUL24 
+			XOR A 
+			LD H,A 
+			LD L,A 
+			SBC HL,BC 
+			LD B,H 
+			LD C,L 
+			JP MUL24_NEG 
+2:			XOR A 
+			LD H,A 
+			LD L,A 
+			SBC HL,DE 
+			EX DE,HL 
+			BIT 7,B 
+			JP Z,MUL24_NEG 
+			XOR A
+			LD H,A 
+			LD L,A 
+			SBC HL,BC 
+			LD B,H 
+			LD C,L 
+			JP MUL24 
+
+; Trig rotation
+; A =COS(D)+SIN(E)
+; A'=COS(D)-SIN(E)
+;
+Trig_Rotate:		PUSH DE 
+			LD (Trig_Rotate1+1),A 
+			LD C,E 
+			CALL SIN 
+			LD E,A 
+Trig_Rotate1:		LD A,0
+			LD C,D 
+			CALL COS 
+			SUB E 
+			EX AF,AF 
+			POP DE 
+			LD A,(Trig_Rotate1+1) 
+			LD C,E 
+			CALL COS 
+			LD E,A 
+			LD A,(Trig_Rotate1+1) 
+			LD C,D 
+			CALL SIN 
+			ADD A,E 
+			RET 
+
+; Basic trig functions
+; A=TRIG(A)*C
+; 
+COS:			ADD A,64
+SIN:			LD H,high SIN_TABLE
+			BIT 7,A 
+			JR NZ,1F 
+			LD L,A
+			LD B,(HL)
+			LD A,C 
+			AND A 
+			JP P,MUL8_DIV256 
+			NEG 
+			LD C,A 
+			JP MUL8_DIV256_NEG 
+1:			AND 127
+			LD L,A 
+			LD B,(HL) 
+			LD A,C 
+			AND A 
+			JP P,MUL8_DIV256_NEG 
+			NEG 
+			LD C,A 
+			JP MUL8_DIV256 
+
+Cube:			DB 8
+			DB -40,40,40
+			DB 40,40,40
+			DB 40,-40,40
+			DB -40,-40,40
+			DB -40,40,-40
+			DB 40,40,-40
+			DB 40,-40,-40
+			DB -40,-40,-40
+			DB 6
+			DB 0,1,2,3: DW Vector_Texture_00
+			DB 0,4,5,1: DW Vector_Texture_01
+			DB 7,6,5,4: DW Vector_Texture_02
+			DB 3,2,6,7: DW Vector_Texture_03
+			DB 1,5,6,2: DW Vector_Texture_00
+			DB 0,3,7,4: DW Vector_Texture_01
+
+Code_Length:		EQU $-Code_Start+1
+
+			SAVESNA "main.sna", Code_Start
