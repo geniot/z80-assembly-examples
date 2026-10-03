@@ -6485,14 +6485,14 @@ LBC10_5:
   LD B,$03
   CALL pause_long
   LD A,(lives_1up)
-  DEC A			; Отнимаем жизнь
+;  DEC A			; Отнимаем жизнь
   LD (lives_1up),A
-  JR Z,LBC10_6
+;  JR Z,GAME_OVER
   LD A,(game_mode)
   DEC A
   CALL Z,current_level_2up_copier
   JP LB9E8_1
-LBC10_6:
+GAME_OVER:
   LD B,$02
   CALL pause_clear_screen_attrib
   CALL clear_screen_attrib
